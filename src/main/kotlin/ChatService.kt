@@ -57,12 +57,17 @@ object ChatService {
             chat.messages = emptyList()
         }
     }
-    fun editMessage(chatId: Int, messageId: Int) = chats.filter { chat ->
+    fun editMessage(chatId: Int, messageId: Int, text: String) = chats.filter { chat ->
         chat.id == chatId
-        chat.messages.filter{ message ->
-        message.id == messageId
-    }
+    }.forEach { chat ->
+       chat.messages.filter { message ->
+           message.id == messageId
+       }.forEach { message ->
+       message.message = text
+       }
+
+       }
     }
 
-}
+
 
