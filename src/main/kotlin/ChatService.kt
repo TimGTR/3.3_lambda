@@ -6,14 +6,10 @@ object ChatService {
         val message = Message(1, user1Id, text)
         val newChat = chats.filter { chat ->
             chat.users.containsAll(listOf(user1Id, user2Id))
-        }
-            .firstOrNull()
-            .let { chat ->
-                chat?.copy(messages = chat.messages + message)
-            } ?: Chat(
-            id = 1,
-            listOf(user1Id, user1Id),
-            listOf(message)
+        }.firstOrNull().let { chat ->
+            chat?.copy(messages = chat.messages + message)
+        } ?: Chat(
+            id = 1, listOf(user1Id, user1Id), listOf(message)
         )
         chats.removeIf { newChat.id == it.id }
         chats.add(newChat)
@@ -21,14 +17,14 @@ object ChatService {
 
     fun getChats(userId: Int) {
 
-        val x = chats.filter { chat ->
-            chat.users.contains(userId)
-        }.forEach { chat ->
-            chat.messages.forEach {
-                it.isRead = true
-            }
+        val x = chats.filter { chat -> chat.users.contains(userId) }
+            .forEach { chat ->
+                chat.messages
+                    .forEach { message ->
+                        message.isRead = true
+                    }
 
-        }
+            }
 
     }
 
@@ -48,26 +44,36 @@ object ChatService {
     }
 
     fun deleteChat(chatId: Int) {
-        var x = chats.filter { chat ->
-            chat.id == chatId
-        }
-        x.forEach() {chat ->
+        var x = chats.filter { chat -> chat.id == chatId }
+        x.forEach() { chat ->
             chat.id = null
             chat.users = emptyList()
             chat.messages = emptyList()
         }
     }
+
     fun editMessage(chatId: Int, messageId: Int, text: String) = chats.filter { chat ->
         chat.id == chatId
-    }.forEach { chat ->
-       chat.messages.filter { message ->
-           message.id == messageId
-       }.forEach { message ->
-       message.message = text
-       }
-
-       }
     }
+        .forEach { chat ->
+            chat.messages
+                .filter { message -> message.id == messageId }
+                .forEach { message -> message.message = text }
+        }
+
+    fun deleteMessage(chatId: Int, messageId: Int) {
+        chats.forEach { chat -> chat.messages.size }
+        chats.filter { chat -> chat.id == chatId }
+            .forEach { chat ->
+                chat.messages
+                    .forEach() { message ->
+                        if (message.id == messageId) message.message = null
+                    }
+                if (chat.messages.isEmpty()) deleteChat(chatId)
+            }
+    }
+}
+
 
 
 
