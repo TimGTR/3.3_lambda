@@ -1,6 +1,6 @@
 object ChatService {
     var chats = mutableListOf<Chat>()
-    var id = 1
+    var id = 0
 
     fun sendMessage(user1Id: Int, user2Id: Int, text: String) {
         val message = Message(1, user1Id, text)
@@ -9,43 +9,40 @@ object ChatService {
         }.firstOrNull().let { chat ->
             chat?.copy(messages = chat.messages + message)
         } ?: Chat(
-            id = 1, listOf(user1Id, user1Id), listOf(message)
+            id + 1, listOf(user1Id, user1Id), listOf(message)
         )
         chats.removeIf { newChat.id == it.id }
         chats.add(newChat)
     }
 
-    fun getChats(userId: Int) {
+    fun getChats(userId: Int) = chats.filter { chat -> chat.users.contains(userId) }.map { chat ->
+            chat.messages.map { message ->
+                    message.isRead = true
+                }
 
-        val x = chats.filter { chat -> chat.users.contains(userId) }
-            .forEach { chat ->
-                chat.messages
-                    .forEach { message ->
-                        message.isRead = true
-                    }
+        }
 
-            }
 
-    }
-
-    fun readChat(chatId: Int) {
-        chats.forEach() { chat ->
-            if (chat.id == chatId) chat.messages.forEach() {
+    fun readChat(chatId: Int): Boolean {
+        chats.map { chat ->
+            if (chat.id == chatId) chat.messages.map {
                 it.isRead = true
+                return true
             }
 
         }
+        return false
     }
 
-    fun getUnreadChatsCount(userId: Int) {
+    fun getUnreadChatsCount(userId: Int) =
         chats.count { chat ->
             chat.users.contains(userId)
         }
-    }
+
 
     fun deleteChat(chatId: Int) {
         var x = chats.filter { chat -> chat.id == chatId }
-        x.forEach() { chat ->
+        x.map { chat ->
             chat.id = null
             chat.users = emptyList()
             chat.messages = emptyList()
@@ -54,19 +51,14 @@ object ChatService {
 
     fun editMessage(chatId: Int, messageId: Int, text: String) = chats.filter { chat ->
         chat.id == chatId
-    }
-        .forEach { chat ->
-            chat.messages
-                .filter { message -> message.id == messageId }
-                .forEach { message -> message.message = text }
+    }.map { chat ->
+            chat.messages.filter { message -> message.id == messageId }.map { message -> message.message = text }
         }
 
     fun deleteMessage(chatId: Int, messageId: Int) {
-        chats.forEach { chat -> chat.messages.size }
-        chats.filter { chat -> chat.id == chatId }
-            .forEach { chat ->
-                chat.messages
-                    .forEach() { message ->
+        chats.map { chat -> chat.messages.size }
+        chats.filter { chat -> chat.id == chatId }.map { chat ->
+                chat.messages.map { message ->
                         if (message.id == messageId) message.message = null
                     }
                 if (chat.messages.isEmpty()) deleteChat(chatId)

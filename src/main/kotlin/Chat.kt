@@ -1,5 +1,5 @@
 data class Chat(
-    var id: Int?,
-    var users: List<Int>,
-    var messages: List<Message>
+    val id: Int?,
+    val users: List<Int>,
+    val messages: List<Message>
 )
