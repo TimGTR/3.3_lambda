@@ -40,14 +40,12 @@ object ChatService {
         }
 
 
-    fun deleteChat(chatId: Int) {
-        var x = chats.filter { chat -> chat.id == chatId }
-        x.map { chat ->
-            chat.id = null
-            chat.users = emptyList()
-            chat.messages = emptyList()
+    fun deleteChat(chatId: Int) = chats.filter { chat -> chat.id == chatId }
+        .map { chat ->
+            chat?.copy(id = null,
+            users = emptyList(),
+            messages = emptyList())
         }
-    }
 
     fun editMessage(chatId: Int, messageId: Int, text: String) = chats.filter { chat ->
         chat.id == chatId
