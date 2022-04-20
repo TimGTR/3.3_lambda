@@ -31,6 +31,12 @@ class ChatServiceTest2 {
 
     @Test
     fun sendMessage() {
+        ChatService
+        val user1Id = 1
+        val user2Id = 2
+        val text = "1"
+        ChatService.sendMessage(user1Id, user2Id, text)
+        assertEquals(1, ChatService.chats.size)
 
     }
 
@@ -67,6 +73,12 @@ class ChatServiceTest2 {
 
     @Test
     fun deleteChat() {
+
+    }
+
+    @Test
+    fun noDeleteChat() {
+
     }
 
     @Test

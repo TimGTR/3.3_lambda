@@ -91,7 +91,14 @@ object ChatService {
     }
 
     fun clear() {
-        chats.clear()
+        chats.map { chat ->
+            chat.copy (
+                id = null,
+                users = emptyList(),
+                messages = emptyList()
+                    )
+
+        }
     }
 }
 
